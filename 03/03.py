@@ -14,7 +14,7 @@ def get_collisions(chart: list, right: int, down: int) -> int:
     y = 0
     collisions = 0
     while x < len(chart):
-        # Entends chart if needed
+        # Extends chart if needed
         original = chart[x]
         while len(chart[x]) < y:
             chart[x] += original
