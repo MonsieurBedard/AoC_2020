@@ -35,63 +35,91 @@ def check_fields(passport):
     return valid
 
 
+def check_byr(value):
+    num = int(value)
+    if not (1920 <= num <= 2002):
+        return False
+    return True
+
+
+def check_iyr(value):
+    num = int(value)
+    if not (2010 <= num <= 2020):
+        return False
+    return True
+
+
+def check_eyr(value):
+    num = int(value)
+    if not (2020 <= num <= 2030):
+        return False
+    return True
+
+
+def check_hgt(value):
+    num = int(''.join([i for i in value if i.isdigit()]))
+    text = ''.join([i for i in value if not i.isdigit()])
+    if text == 'cm':
+        if not (150 <= num <= 193):
+            return False
+    elif text == 'in':
+        if not (59 <= num <= 76):
+            return False
+    else:
+        return False
+    return True
+
+
+def check_hcl(value):
+    regexp = re.compile(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')
+    if not regexp.search(value):
+        return False
+    return True
+
+
+def check_ecl(value):
+    matches = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
+    valid = False
+    for match in matches:
+        if value == match:
+            valid = True
+    if not valid:
+        return False
+    return True
+
+
+def check_pid(value):
+    if len(value) != 9:
+        return False
+    if not value.isdigit():
+        return False
+    return True
+
+
 def check_if_valid(passport):
     if check_fields(passport):
-        is_valid = True
+        checks = []
         for field in passport:
             key = field.split(':')[0]
             value = field.split(':')[1]
 
             if 'byr' == key:
-                num = int(value)
-                if not (1920 <= num <= 2002):
-                    is_valid = False
-
+                checks.append(check_byr(value))
             elif 'iyr' == key:
-                num = int(value)
-                if not (2010 <= num <= 2020):
-                    is_valid = False
-
+                checks.append(check_iyr(value))
             elif 'eyr' == key:
-                num = int(value)
-                if not (2020 <= num <= 2030):
-                    is_valid = False
-
+                checks.append(check_eyr(value))
             elif 'hgt' == key:
-                num = int(''.join([i for i in value if i.isdigit()]))
-                text = ''.join([i for i in value if not i.isdigit()])
-                if text == 'cm':
-                    if not (150 <= num <= 193):
-                        is_valid = False
-                elif text == 'in':
-                    if not (59 <= num <= 76):
-                        is_valid = False
-                else:
-                    is_valid = False
-
+                checks.append(check_hgt(value))
             elif 'hcl' == key:
-                regexp = re.compile(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')
-                if not regexp.search(value):
-                    is_valid = False
-
-            elif 'ecl' in key:
-                matches = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
-                valid = False
-                for match in matches:
-                    if value == match:
-                        valid = True
-                if not valid:
-                    is_valid = False
-
+                checks.append(check_hcl(value))
+            elif 'ecl' == key:
+                checks.append(check_ecl(value))
             elif 'pid' == key:
-                if len(value) != 9:
-                    is_valid = False
-                if not value.isdigit():
-                    is_valid = False
+                checks.append(check_pid(value))
         
-        return is_valid
-    else:
-        return False
+        return False not in checks
+    return False
 
 
 def answer_01():
