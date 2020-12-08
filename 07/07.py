@@ -80,8 +80,6 @@ def answer_02():
 
     count = 0
     count = count_bags(bags['shiny gold'], bags)
-    # for bag in bags:
-    #    count += count_bags(bags[bag], bags)
 
     print(f'Answer 02 = {count}')
 
